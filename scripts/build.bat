@@ -1,13 +1,15 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set /p GITHUB_TOKEN=<D:\DevTools\github.token
+set CALL_DIR=%CD%
+
+if "%IGE_BUILDER%"=="" (
+    set IGE_BUILDER=%APPDATA%\indigames\igeBuilder
+)
+
 if not exist "!IGE_BUILDER!\.git" (
-    if exist "!IGE_BUILDER!" (
-        rmdir /s /q "!IGE_BUILDER!"
-    )
     mkdir "!IGE_BUILDER!"
-    git clone https://!GITHUB_TOKEN!@github.com/indigames/igeBuilder !IGE_BUILDER!
+    git clone https://github.com/indigames/igeBuilder !IGE_BUILDER!
 ) else (
     cd !IGE_BUILDER!
     git fetch --all
@@ -15,15 +17,16 @@ if not exist "!IGE_BUILDER!\.git" (
     git pull
 )
 
-set CONAN_REVISIONS_ENABLED=1
-conan remote add ige-center http://10.1.0.222:8081/artifactory/api/conan/conan
-conan user -p Indi@2019 -r ige-center thai.phi
 
-cd %WORKSPACE%
-if exist "project.conf" (
-    for /f "usebackq delims=" %%a in ("project.conf") do (
+if not exist "!IGE_BUILDER!\build-header-only-lib.bat" (
+    echo ERROR: IGE_BUILDER was not found
+    goto ERROR
+)
+
+if exist "%~dp0..\conanfile.py" (
+    for /f "usebackq delims=" %%a in ("%~dp0..\conanfile.py") do (
         set ln=%%a
-        for /f "tokens=1,2 delims=: " %%b in ("!ln!") do (
+        for /f "tokens=1,2 delims='=' " %%b in ("!ln!") do (
                 set currkey=%%b
                 set currval=%%c
                 
@@ -36,4 +39,10 @@ if exist "project.conf" (
         )
     )
 )
+
+echo !PROJECT_NAME!_!PROJECT_VER!
+
+cd %CALL_DIR%
 call !IGE_BUILDER!\build-header-only-lib.bat . !PROJECT_NAME! !PROJECT_VER!
+
+cd %CALL_DIR%
