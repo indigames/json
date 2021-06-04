@@ -13,17 +13,13 @@ class IgeConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
     generators = "cmake"
-    exports_sources = "*"
+    exports_sources = "*.h*"
     no_copy_source = True
     short_paths = True
 
     def package(self):
-        dirs = os.listdir(os.environ['PROJECT_DIR'])
-        print(dirs)
-        if 'include' in dirs:
-            exports_sources = "include/*"
-            print(exports_sources)
-        self.copy("*.h*")
+        self.copy("*.h*", dst="include", src="single_include")
+        self.run(f'conan upload {self.name}/{self.version}@ige/test --remote ige-center --force --confirm')
 
     def package_id(self):
         self.info.header_only()
