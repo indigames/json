@@ -19,7 +19,10 @@ class IgeConan(ConanFile):
 
     def package(self):
         self.copy("*.h*", dst="include", src="single_include")
-        self.run(f'conan upload {self.name}/{self.version}@ige/test --remote ige-center --force --confirm')
+        error_code = self.run(f'conan upload {self.name}/{self.version}@ige/test --all --remote ige-center --force --confirm', ignore_errors=True)
+        if(error_code != 0):
+            print(f'Conan upload failed, error code: {error_code}')
+            os.exit(1)
 
     def package_id(self):
         self.info.header_only()
