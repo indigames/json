@@ -35,3 +35,4 @@ doc/mkdocs/docs/__pycache__/
 doc/xml
 /doc/docset/nlohmann_json.docset/
 /conanfile.py
+/__pycache__
