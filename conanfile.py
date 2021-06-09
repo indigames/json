@@ -17,6 +17,7 @@ class IgeConan(ConanFile):
     no_copy_source = True
     requires = []
     short_paths = True
+    revision_mode="scm"
 
     def package(self):
         self.copy("*.h*", dst="include", src="single_include")

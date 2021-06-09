@@ -13,7 +13,7 @@ def setEnv(name, value):
 def main():
     setEnv('CONAN_REVISIONS_ENABLED', '1')
     os.system('conan create . ige/test')
-    return os.system(f'conan upload {IgeConan.name}/{IgeConan.version}@ige/test --all --remote ige-center --check --confirm --retry 3 --retry-wait 60')
+    return os.system(f'conan upload {IgeConan.name}/{IgeConan.version}@ige/test --remote ige-center --all --check --confirm --retry 3 --retry-wait 60 --force')
 
 if __name__ == "__main__":
     main()
